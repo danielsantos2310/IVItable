@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IVI Admin – Live Scoring</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root { --green: #007A33; --orange: #FF6F00; --ink: #0E1A2B; }
+    body.container { max-width: 900px; margin: 24px auto; padding: 12px; font-family: system-ui, Arial, sans-serif; color: var(--ink); }
+    h1 { font-size: 22px; margin: 0 0 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
+    .note { color: #667085; font-size: 12px; }
+    .grid { display: grid; gap: 12px; }
+    .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+    .row span { display: inline-block; min-width: 36px; text-align: center; font-weight: 700; }
+    button { border: 0; border-radius: 10px; padding: 8px 12px; background: #f3f4f6; cursor: pointer; }
+    button:hover { background: #e5e7eb; }
+    .nav-btn { background: var(--green); color: #fff; }
+    .nav-btn:hover { opacity: .9; }
+    .end { background: var(--orange) !important; color: #fff; }
+    select, input { padding: 8px; border: 1px solid #e5e7eb; border-radius: 10px; width: 100%; }
+  </style>
+</head>
+<body class="container">
+  <script>
+    // Basic password protection prompt
+    const password = prompt("Enter Admin Password:");
+    if (password !== "IVILeague2025") {
+      alert("Access denied");
+      window.location.href = "index.html";  // redirect to public page if wrong
+    }
+    // If the password is correct, the page continues loading below.
+  </script>
+
+  <h1>IVI Admin – Live Scoring</h1>
+
+  <!-- Google Sign-In Buttons for Firebase Auth -->
+  <div style="margin-bottom:16px">
+    <button id="loginBtn">Sign in with Google</button>
+    <button id="logoutBtn" style="display:none">Sign out</button>
+  </div>
+
+  <!-- Match selection dropdown -->
+  <div class="card" style="padding:12px">
+    <label for="matchSelect" class="note">Pick match:</label>
+    <select id="matchSelect"></select>
+  </div>
+
+  <!-- Live scoring panel (hidden until a match is selected) -->
+  <div id="panel" class="card" style="padding:12px; margin-top:12px; display:none">
+    <h3 id="matchTitle" style="margin:0 0 6px"></h3>
+    <p id="matchInfo" class="note" style="margin:0 0 12px"></p>
+
+    <!-- Score input grid for 3 sets -->
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+      <!-- Set 1 card -->
+      <div class="card" style="padding:10px">
+        <h4>Set 1</h4>
+        <div class="row">
+          <span id="s1h">0</span>
+          <button onclick="adj(1, 'h', +1)">+</button>
+          <button onclick="adj(1, 'h', -1)">−</button>
+        </div>
+        <div class="row">
+          <span id="s1a">0</span>
+          <button onclick="adj(1, 'a', +1)">+</button>
+          <button onclick="adj(1, 'a', -1)">−</button>
+        </div>
+      </div>
+      <!-- Set 2 card -->
+      <div class="card" style="padding:10px">
+        <h4>Set 2</h4>
+        <div class="row">
+          <span id="s2h">0</span>
+          <button onclick="adj(2, 'h', +1)">+</button>
+          <button onclick="adj(2, 'h', -1)">−</button>
+        </div>
+        <div class="row">
+          <span id="s2a">0</span>
+          <button onclick="adj(2, 'a', +1)">+</button>
+          <button onclick="adj(2, 'a', -1)">−</button>
+        </div>
+      </div>
+      <!-- Set 3 card (Tie-break) -->
+      <div class="card" style="padding:10px">
+        <h4>Set 3 (TB)</h4>
+        <div class="row">
+          <span id="s3h">0</span>
+          <button onclick="adj(3, 'h', +1)">+</button>
+          <button onclick="adj(3, 'h', -1)">−</button>
+        </div>
+        <div class="row">
+          <span id="s3a">0</span>
+          <button onclick="adj(3, 'a', +1)">+</button>
+          <button onclick="adj(3, 'a', -1)">−</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; display:flex; gap:8px; align-items:center">
+      <button id="startBtn" class="nav-btn">Start Live</button>
+      <button id="endBtn" class="nav-btn end">End Match</button>
+      <span id="saveStatus" class="note"></span>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs + Config + Admin Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    // Initialize Firebase app, Firestore, and Auth
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Auth UI handlers
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    loginBtn.onclick = () => signInWithPopup(auth, provider);
+    logoutBtn.onclick = () => signOut(auth);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = '';
+        console.log('Logged in as:', user.email);
+      } else {
+        loginBtn.style.display = '';
+        logoutBtn.style.display = 'none';
+        console.log('Logged out');
+      }
+    });
+
+    // Utility: fetch CSV and parse into objects
+    async function fetchCSV(url) {
+      const res = await fetch(url, { cache: "no-store" });
+      const text = await res.text();
+      const rows = text.trim().split(/\r?\n/).map(l => l.split(","));
+      const headers = rows[0].map(h => h.trim());
+      return rows.slice(1).map(r =>
+        Object.fromEntries(headers.map((h, i) => [h, (r[i] || "").trim()]))
+      );
+    }
+
+    const MATCHES_CSV_URL = "matches.csv";
+    let currentMatch = null;
+
+    // Helper to fill a scoreboard value or default 0
+    function fill(val, elementId) {
+      document.getElementById(elementId).textContent = String(val ?? 0);
+    }
+
+    // Read all current score values from the DOM
+    function getVals() {
+      return {
+        set1_h: +document.getElementById("s1h").textContent || 0,
+        set1_a: +document.getElementById("s1a").textContent || 0,
+        set2_h: +document.getElementById("s2h").textContent || 0,
+        set2_a: +document.getElementById("s2a").textContent || 0,
+        set3_h: +document.getElementById("s3h").textContent || 0,
+        set3_a: +document.getElementById("s3a").textContent || 0,
+      };
+    }
+
+    // Adjust a score by delta for a given set and side ('h' or 'a')
+    window.adj = (setNum, side, delta) => {
+      const spanId = `s${setNum}${side}`;
+      const current = +document.getElementById(spanId).textContent || 0;
+      const newVal = Math.max(0, current + delta);
+      document.getElementById(spanId).textContent = newVal;
+    };
+
+    // Save current scores to Firestore with given status ("live" or "played")
+    async function save(status) {
+      if (!currentMatch) return;
+      try {
+        const ref = doc(db, "matches", String(currentMatch.id));
+        const payload = { ...getVals(), status: status, updatedAt: serverTimestamp() };
+        await setDoc(ref, payload, { merge: true });
+        document.getElementById("saveStatus").textContent = "Saved ✔";
+      } catch (err) {
+        console.error("Error saving to Firestore:", err);
+        document.getElementById("saveStatus").textContent = "Save failed!";
+      }
+      // Clear the save status message after 1.5s
+      setTimeout(() => {
+        document.getElementById("saveStatus").textContent = "";
+      }, 1500);
+    }
+
+    // Hook up Start/End buttons to save function
+    document.getElementById("startBtn").addEventListener("click", () => save("live"));
+    document.getElementById("endBtn").addEventListener("click", () => save("played"));
+
+    // Initialize match dropdown and panel behavior
+    const select = document.getElementById("matchSelect");
+    const panel = document.getElementById("panel");
+    const title = document.getElementById("matchTitle");
+    const info = document.getElementById("matchInfo");
+
+    // Load matches from CSV and populate the dropdown
+    const matches = await fetchCSV(MATCHES_CSV_URL);
+    select.innerHTML = `<option value="">Select a match...</option>` + 
+      matches.map(m =>
+        `<option value="${m.id}">Round ${m.round} — ${m.home_team} vs ${m.away_team} (${m.date || "TBD"} ${m.time || ""})</option>`
+      ).join("");
+
+    // When a match is selected, show the editing panel
+    select.addEventListener("change", async (e) => {
+      const id = e.target.value;
+      if (!id) {
+        panel.style.display = "none";
+        return;
+      }
+      currentMatch = matches.find(m => m.id === id);
+      title.textContent = `${currentMatch.home_team} vs ${currentMatch.away_team}`;
+      info.textContent = `Round ${currentMatch.round} — ${currentMatch.date || "TBD"} ${currentMatch.time || ""}`;
+
+      // Load any existing live data from Firestore for this match
+      try {
+        const snap = await getDoc(doc(db, "matches", String(id)));
+        const data = snap.data() || {};
+        fill(data.set1_h, "s1h");  fill(data.set1_a, "s1a");
+        fill(data.set2_h, "s2h");  fill(data.set2_a, "s2a");
+        fill(data.set3_h, "s3h");  fill(data.set3_a, "s3a");
+      } catch (err) {
+        console.error("Error loading Firestore data:", err);
+      }
+      panel.style.display = "";
+    });
+  </script>
+</body>
+</html>
