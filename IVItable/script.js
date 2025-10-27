@@ -121,9 +121,14 @@ function renderRound(grouped, idx){
         if (h > a) homeSets++;
         else if (a > h) awaySets++;
       });
-      lineRight = `${homeSets} – ${awaySets}`;
+      // Always show date (or TBD) and time if present
+      let dateStr = m.date ? m.date : "TBD";
+      let timeStr = m.time ? (" " + m.time) : "";
+      lineRight = `${homeSets} – ${awaySets} | ${dateStr}${timeStr}`;
     } else {
-      lineRight = `${m.date || "TBD"} ${m.time || ""}`;
+      let dateStr = m.date ? m.date : "TBD";
+      let timeStr = m.time ? (" " + m.time) : "";
+      lineRight = `${dateStr}${timeStr}`;
     }
     return `<li class="round-item">
       <div>
