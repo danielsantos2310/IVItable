@@ -7,19 +7,25 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
     :root { --green: #007A33; --orange: #FF6F00; --ink: #0E1A2B; }
-    body.container { max-width: 900px; margin: 24px auto; padding: 12px; font-family: system-ui, Arial, sans-serif; color: var(--ink); }
+    body.container { max-width: 900px; margin: 24px auto; padding: 12px; font-family: system-ui, Arial, sans-serif; color: var(--ink); background: #f9fafb; }
     h1 { font-size: 22px; margin: 0 0 12px; }
-    .card { border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; box-shadow: none; margin-bottom: 16px; }
     .note { color: #667085; font-size: 12px; }
     .grid { display: grid; gap: 12px; }
     .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
     .row span { display: inline-block; min-width: 36px; text-align: center; font-weight: 700; }
     button { border: 0; border-radius: 10px; padding: 8px 12px; background: #f3f4f6; cursor: pointer; }
     button:hover { background: #e5e7eb; }
-    .nav-btn { background: var(--green); color: #fff; }
+    .nav-btn { background: var(--green); color: #fff; border: none; border-radius: 10px; width: auto; height: auto; }
     .nav-btn:hover { opacity: .9; }
     .end { background: var(--orange) !important; color: #fff; }
     select, input { padding: 8px; border: 1px solid #e5e7eb; border-radius: 10px; width: 100%; }
+    @media (max-width: 768px) {
+      #panel .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      #panel .grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body class="container">
@@ -48,12 +54,12 @@
   </div>
 
   <!-- Live scoring panel (hidden until a match is selected) -->
-  <div id="panel" class="card" style="padding:12px; margin-top:12px; display:none">
+  <div id="panel" class="card" style="padding:12px; display:none">
     <h3 id="matchTitle" style="margin:0 0 6px"></h3>
     <p id="matchInfo" class="note" style="margin:0 0 12px"></p>
 
     <!-- Score input grid for 3 sets -->
-    <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="grid">
       <!-- Set 1 card -->
       <div class="card" style="padding:10px">
         <h4>Set 1</h4>
@@ -98,7 +104,7 @@
       </div>
     </div>
 
-    <div style="margin-top:12px; display:flex; gap:8px; align-items:center">
+    <div id="scoreActions">
       <button id="startBtn" class="nav-btn">Start Live</button>
       <button id="endBtn" class="nav-btn end">End Match</button>
       <span id="saveStatus" class="note"></span>

@@ -1,47 +1,482 @@
-:root{
-  --green:#007A33;
-  --orange:#FF6F00;
-  --navy:#0E1A2B;
-  --bg:#FFFFFF;
-  --muted:#6b7280;
-  --border:#e5e7eb;
+:root {
+  --green: #007A33;
+  --orange: #FF6F00;
+  --bg-light: #0E223A;         /* deep blue background */
+  --bg-dark: #14243A;          /* slightly lighter blue for cards */
+  --text-dark: #fff;
+  --text-light: #b6c2d1;
+  --border: #1e3550;
+  --radius: 12px;
+  --shadow: 0 4px 24px 0 rgba(0,0,0,0.18); /* softer, larger shadow */
 }
 
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--navy);font:16px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial}
-.container{max-width:1100px;margin:0 auto;padding:16px}
-.header{display:flex;align-items:center;justify-content:space-between;padding-block:12px;border-bottom:1px solid var(--border)}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{height:44px;width:auto}
-h1{margin:0;font-size:1.6rem}
-.nav a{margin-left:16px;text-decoration:none;color:var(--navy);font-weight:600}
-.nav a:hover{color:var(--green)}
+body {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #15304b 60%, #0e223a 100%);
+  margin: 0;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
 
-.section-title{margin:24px 0 12px;font-size:1.35rem;color:var(--green)}
-.card{border:1px solid var(--border);border-radius:14px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.note{margin:8px 4px;color:var(--muted);font-size:.9rem}
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 1.5rem;
+}
 
-.table{width:100%;border-collapse:collapse}
-.table th{background:var(--green);color:#fff;text-align:left;padding:10px;font-weight:700}
-.table td{padding:10px;border-top:1px solid var(--border)}
-.table tr:nth-child(even){background:#fafafa}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  background: var(--bg-dark);
+  box-shadow: var(--shadow);
+  border-bottom: 3px solid var(--green);
+  border-radius: var(--radius);
+  margin-top: 1rem;
+}
 
-.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem;font-weight:700}
-.badge-win{background:rgba(0,122,51,.1);color:var(--green)}
-.badge-loss{background:#fdecea;color:#b42318}
+.logo {
+  width: 48px;
+  margin-right: 1rem;
+}
 
-.carousel{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:stretch;padding:10px}
-.nav-btn{background:var(--green);color:#fff;border:none;padding:10px 12px;border-radius:10px;cursor:pointer}
-.nav-btn:hover{filter:brightness(0.95)}
-.round-title{margin:6px 0 10px;color:var(--green)}
-.round-list{list-style:none;margin:0;padding:0}
-.round-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-top:1px solid var(--border)}
-.round-item:first-child{border-top:none}
-.status{font-weight:700}
-.status.scheduled{color:var(--orange)}
-.status.played{color:var(--green)}
+.brand {
+  display: flex;
+  align-items: center;
+}
 
-.footer{border-top:3px solid var(--orange);margin-top:40px;background:#f9fafb}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;align-items:flex-start;padding-block:18px}
-.partners{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.pill{border:1px dashed var(--border);padding:6px 10px;border-radius:999px;color:var(--muted)}
+h1 {
+  font-size: 2.2rem;
+  margin: 0;
+  color: var(--green);
+}
+
+/* Make headings bold and modern */
+h1, h2, h3, .section-title, .table th {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+h1, .main-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 0.2em;
+}
+
+.nav a {
+  margin-left: 1rem;
+  text-decoration: none;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.nav a:hover {
+  color: var(--orange);
+}
+
+.section-title {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: var(--green);
+  border-left: 6px solid var(--orange);
+  padding-left: 0.75rem;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 2.5rem 0 1.2rem 0;
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+/* Center section titles like "League Table", "Fixtures", "Results" */
+.section-title {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.section-title strong {
+  color: var(--green);
+}
+
+.section-title .accent {
+  color: var(--orange);
+}
+
+/* Subtle green glow around cards (standings, fixtures, etc) */
+.card {
+  background: rgba(20,36,58,0.98);
+  border-radius: 18px;
+  box-shadow:
+    0 4px 32px 0 rgba(0,0,0,0.18),
+    0 0 0 2px rgba(0,122,51,0.13);
+  border: 1px solid rgba(0,122,51,0.13);
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 1.08rem;
+}
+.table th, .table td {
+  padding: 1.1rem 0.7rem;
+  text-align: center;
+  font-weight: 700;
+  border-bottom: none;
+  background: transparent;
+}
+.table th {
+  background: none;
+  color: #b6c2d1;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.table tr {
+  border-radius: 12px;
+  transition: background 0.18s;
+}
+.table tr:hover {
+  background: linear-gradient(90deg, rgba(0,122,51,0.18) 0%, rgba(20,36,58,0.00) 100%);
+  transition: background 0.18s;
+}
+.table tr:nth-child(1),
+.table tr:nth-child(10) {
+  background: linear-gradient(90deg, rgba(0,122,51,0.18) 0%, rgba(20,36,58,0.98) 100%);
+}
+.table td:first-child {
+  text-align: left;
+  font-weight: 800;
+  padding-left: 2rem;
+}
+.table td:last-child {
+  text-align: right;
+  padding-right: 2rem;
+}
+
+.table td.win {
+  color: var(--green);
+  font-weight: 700;
+}
+.table td.loss {
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.round-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Remove previous white hover for fixtures */
+.round-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+  background: transparent;
+}
+
+/* Add gradient hover effect to fixtures/results list items */
+.round-item:hover {
+  background: linear-gradient(90deg, rgba(0,122,51,0.18) 0%, rgba(20,36,58,0.00) 100%);
+  transition: background 0.18s;
+}
+
+.round-right {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-top: 0.3rem;
+}
+
+.status.live {
+  background: var(--orange);
+  color: white;
+}
+
+.status.played {
+  background: transparent;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 50px;
+  padding: 0.25rem 1.1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: none;
+  display: inline-block;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.status.played:hover,
+.status.played:focus {
+  background: rgba(0,122,51,0.10);
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.status.scheduled {
+  background: transparent;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 50px;
+  padding: 0.25rem 1.1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: none;
+  display: inline-block;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.status.scheduled:hover,
+.status.scheduled:focus {
+  background: rgba(0,122,51,0.10);
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.carousel-content {
+  flex: 1;
+  min-width: 0; /* ESSENCIAL: Permite que encolha mesmo com conteúdo longo */
+  padding: 0 0.5rem;
+}
+
+
+
+/* Minimal circular nav buttons with green border and arrow */
+.nav-btn {
+  background:var(--green);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0.4rem 0.6rem;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  flex-shrink: 0;   /* Impede que a seta seja encolhida! */
+}
+
+
+
+.nav-btn:hover, .nav-btn:focus {
+  background: rgba(0,122,51,0.10);
+  filter:brightness(0.95);
+  color: var(--green);
+  border: 2px solid var(--green);
+  transform: scale(1.08);
+}
+
+.nav-btn:active {
+  transform: scale(0.98);
+  background: #00441c;
+  color: #fff;
+}
+
+/* Optional: Remove button outline on click for a cleaner look */
+.nav-btn::-moz-focus-inner {
+  border: 0;
+}
+
+.note {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 0.75rem;
+}
+
+.footer {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  padding: 2rem 1rem;
+  margin-top: 2rem;
+  border-top: 3px solid var(--green);
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.footer strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.footer a {
+  color: var(--green);
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.18s;
+}
+
+.footer a:hover {
+  color: var(--orange);
+}
+
+.footer-social {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.footer-icon-link {
+  display: flex;
+  align-items: center;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: color 0.18s;
+  gap: 0.5em;
+}
+
+.footer-icon-link:hover {
+  color: var(--green);
+}
+
+.footer-icon svg {
+  display: block;
+  height: 1.5em;
+  width: 1.5em;
+}
+
+.pill {
+  display: inline-block;
+  background: var(--orange);
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+  letter-spacing: 0.01em;
+}
+
+.admin-btn {
+  background: transparent;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 50%;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s;
+  box-shadow: none;
+  outline: none;
+}
+.admin-btn:hover,
+.admin-btn:focus {
+  background: rgba(0,122,51,0.10);
+  color: var(--green);
+  border-color: var(--green);
+}
+
+/* Style the partners section to center content */
+.partners {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.7rem;
+  gap: 0.7rem;
+}
+
+/* Responsive adjustments for mobile */
+#standingsTable {
+  overflow-x: auto;
+}
+.table th, .table td {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  /* Header: stack brand and nav vertically */
+  .header {
+    flex-direction: column;
+    align-items: center;
+  }
+  .header .brand {
+    margin-bottom: 1rem;
+  }
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .nav a {
+    margin: 0.5rem 0;
+    margin-left: 0;
+    /* Área de clique maior para links */
+    padding: 0.5rem 0;
+  }
+  /* Reduce heading size on smaller screens */
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Stack action buttons vertically on very small screens */
+  #scoreActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #scoreActions button {
+    width: 100%;
+    text-align: center;
+  }
+  /* Larger tap targets for plus/minus buttons */
+  .row button {
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Extra small screens: stack logo above title */
+  .brand {
+    flex-direction: column;
+    align-items: center;
+  }
+  .logo {
+    margin: 0 0 0.5rem 0;
+  }
+}
